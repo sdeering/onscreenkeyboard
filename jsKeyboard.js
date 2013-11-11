@@ -140,6 +140,8 @@ var jsKeyboard = {
             output = [a.slice(0, pos - 1), a.slice(pos)].join('');
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition--; //-1 cursor
+        if (jsKeyboard.currentElementCursorPosition < 0)
+        	jsKeyboard.currentElementCursorPosition = 0;
         jsKeyboard.updateCursor();
     },
     enter: function () {

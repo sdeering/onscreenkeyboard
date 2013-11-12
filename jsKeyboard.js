@@ -157,11 +157,11 @@ var jsKeyboard = {
     },
     writeSpecial: function (m) {
         var a = jsKeyboard.currentElement.val(),
-            b = String.fromCharCode(m),
+            b = m,
             pos = jsKeyboard.currentElementCursorPosition,
             output = [a.slice(0, pos), b, a.slice(pos)].join('');
         jsKeyboard.currentElement.val(output);
-        jsKeyboard.currentElementCursorPosition++; //+1 cursor
+        jsKeyboard.currentElementCursorPosition += b.length; //+n cursor
         jsKeyboard.updateCursor();
     },
     show: function () {

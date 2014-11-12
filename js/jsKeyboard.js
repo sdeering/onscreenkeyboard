@@ -19,13 +19,13 @@ var jsKeyboard = {
 
         jsKeyboard.addKeyDownEvent();
 
-         jsKeyboard.show();
-         $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e)
-         {
+        jsKeyboard.show();
+        $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e)
+        {
             jsKeyboard.currentElement = $(this);
             jsKeyboard.currentElementCursorPosition = $(this).getCursorPosition();
             console.log('keyboard is now focused on '+jsKeyboard.currentElement.attr('name')+' at pos('+jsKeyboard.currentElementCursorPosition+')');
-         });
+        });
     },
     focus: function(t) {
         jsKeyboard.currentElement = $(t);
@@ -134,6 +134,8 @@ var jsKeyboard = {
             output = [a.slice(0, pos-1), a.slice(pos)].join('');
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition--; //-1 cursor
+        if (jsKeyboard.currentElementCursorPosition < 0)
+            jsKeyboard.currentElementCursorPosition = 0;
         jsKeyboard.updateCursor();
     },
     enter: function() {

@@ -24,6 +24,7 @@ var jsKeyboard = {
         {
             jsKeyboard.currentElement = $(this);
             jsKeyboard.currentElementCursorPosition = $(this).getCursorPosition();
+            jsKeyboard.currentSelection = $(this).getSelectionText();
             console.log('keyboard is now focused on '+jsKeyboard.currentElement.attr('name')+' at pos('+jsKeyboard.currentElementCursorPosition+')');
         });
     },
@@ -123,20 +124,41 @@ var jsKeyboard = {
         var a = jsKeyboard.currentElement.val(),
             b = String.fromCharCode(m),
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos), b, a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                    var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), b, tail].join('')
+                } else {
+                    return [a.slice(0, pos), b, a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition++; //+1 cursor
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     del: function() {
         var a = jsKeyboard.currentElement.val(),
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos-1), a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                    var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), tail].join('')
+                } else {
+                    return [a.slice(0, pos - 1), a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
-        jsKeyboard.currentElementCursorPosition--; //-1 cursor
+        if (!selection)
+            jsKeyboard.currentElementCursorPosition -= 1; //-1 cursor
         if (jsKeyboard.currentElementCursorPosition < 0)
             jsKeyboard.currentElementCursorPosition = 0;
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     enter: function() {
         var t = jsKeyboard.currentElement.val();
@@ -146,10 +168,20 @@ var jsKeyboard = {
         var a = jsKeyboard.currentElement.val(),
             b = " ",
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos), b, a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                    var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), b, tail].join('')
+                } else {
+                    return [a.slice(0, pos), b, a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition++; //+1 cursor
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     writeSpecial: function(m) {
         var a = jsKeyboard.currentElement.val(),
@@ -256,12 +288,12 @@ var jsKeyboard = {
 
 // GET CURSOR POSITION
 jQuery.fn.getCursorPosition = function(){
-    if(this.lengh == 0) return -1;
+    if (!this.length) return -1;
     return $(this).getSelectionStart();
 }
 
 jQuery.fn.getSelectionStart = function(){
-    if(this.lengh == 0) return -1;
+    if (!this.length) return -1;
     input = this[0];
 
     var pos = input.value.length;
@@ -276,6 +308,19 @@ jQuery.fn.getSelectionStart = function(){
     pos = input.selectionStart;
 
     return pos;
+}
+
+jQuery.fn.getSelectionText = function(){
+    var el = this[0];
+    var text = '';
+    
+    if (window.getSelection // not supported in IE 8 and prior
+        && typeof el.selectionStart === 'number' 
+        && typeof el.selectionEnd === 'number') {
+        text = el.value.substring(el.selectionStart, el.selectionEnd);
+    }
+
+    return text;
 }
 
 //SET CURSOR POSITION

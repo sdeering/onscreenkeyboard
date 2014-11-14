@@ -3,9 +3,6 @@ var jsKeyboard = {
         buttonClass: "button", // default button class
         onclick: "jsKeyboard.write();", // default onclick event for button
         keyClass: "key", // default key class used to define style of text of the button
-        text: {
-            close: "close"
-        }
     },
     "keyboard": [], // different keyboards can be set to this variable in order to switch between keyboards easily.
     init: function(elem, keyboard) {
@@ -19,13 +16,28 @@ var jsKeyboard = {
 
         jsKeyboard.addKeyDownEvent();
 
-         jsKeyboard.show();
-         $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e)
-         {
+        jsKeyboard.show();
+        $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e) {
             jsKeyboard.currentElement = $(this);
             jsKeyboard.currentElementCursorPosition = $(this).getCursorPosition();
+            jsKeyboard.currentSelection = $(this).getSelectionText();
+            // physical keyboard: write
+            // jsKeyboard.currentElement[0].onkeypress = function (e) {
+            //     e.preventDefault();
+            //     var elem = $(".button[onclick='jsKeyboard.write(" + e.which + ");']");
+            //     elem.click();
+            // };
+            // physical keyboard: delete
+            // jsKeyboard.currentElement[0].onkeydown = function (e) {
+            //     if (e.which === 8) {
+            //         e.preventDefault();
+            //         var elem = $(".button[onclick='jsKeyboard.del()']")[0];
+            //         console.log(elem);
+            //         elem.click();
+            //     }
+            // };
             console.log('keyboard is now focused on '+jsKeyboard.currentElement.attr('name')+' at pos('+jsKeyboard.currentElementCursorPosition+')');
-         });
+        });
     },
     focus: function(t) {
         jsKeyboard.currentElement = $(t);
@@ -42,33 +54,30 @@ var jsKeyboard = {
 
         var s = "";
         s += "<div id=\"keyboard\">";
-        s += "<div id=\"keyboardHeader\">";
-        // s += "<div onclick=\"jsKeyboard.hide();\"><span>" + jsKeyboard.settings.text.close + "</span><span class=\"closex\"> X</span></div>"
-        s += "</div>";
 
         /*small letter */
-        s += "<div id=\"keyboardSmallLetter\">";
+        s += "<div id=\"keyboard_lowercase\">";
         $.each(jsKeyboard.keyboard[keyboard].smallLetter, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*capital letter*/
-        s += "<div id=\"keyboardCapitalLetter\">";
+        s += "<div id=\"keyboard_uppercase\">";
         $.each(jsKeyboard.keyboard[keyboard].capitalLetter, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*number*/
-        s += "<div id=\"keyboardNumber\">";
+        s += "<div id=\"keyboard_numbers\">";
         $.each(jsKeyboard.keyboard[keyboard].number, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*symbols*/
-        s += "<div id=\"keyboardSymbols\">";
+        s += "<div id=\"keyboard_symbols\">";
         $.each(jsKeyboard.keyboard[keyboard].symbols, function(i, key) {
             generate(key);
         });
@@ -89,30 +98,26 @@ var jsKeyboard = {
         $("#" + jsKeyboard.keyboardLayout).html(s);
     },
     addKeyDownEvent: function() {
-        $("#keyboardCapitalLetter > div.button, #keyboardSmallLetter > div.button, #keyboardNumber > div.button, #keyboardSymbols > div.button").
-            bind('mousedown', (function() { $(this).addClass("buttonDown"); })).
-            bind('mouseup', (function() { $(this).removeClass("buttonDown"); })).
-            bind('mouseout', (function() { $(this).removeClass("buttonDown"); }));
-
-            //key focus down on actual keyboard key presses
-            //todo:....
-
+        $("#keyboard_uppercase > div.button, #keyboard_lowercase > div.button, #keyboard_numbers > div.button, #keyboard_symbols > div.button")
+            .bind('mousedown', (function() { $(this).addClass("down"); }))
+            .bind('mouseup', (function() { $(this).removeClass("down"); }))
+            .bind('mouseout', (function() { $(this).removeClass("down"); }));
     },
     changeToSmallLetter: function() {
-        $("#keyboardCapitalLetter,#keyboardNumber,#keyboardSymbols").css("display", "none");
-        $("#keyboardSmallLetter").css("display", "block");
+        $("#keyboard_uppercase, #keyboard_numbers, #keyboard_symbols").css("display", "none");
+        $("#keyboard_lowercase").css("display", "block");
     },
     changeToCapitalLetter: function() {
-        $("#keyboardCapitalLetter").css("display", "block");
-        $("#keyboardSmallLetter,#keyboardNumber,#keyboardSymbols").css("display", "none");
+        $("#keyboard_uppercase").css("display", "block");
+        $("#keyboard_lowercase, #keyboard_numbers, #keyboard_symbols").css("display", "none");
     },
     changeToNumber: function() {
-        $("#keyboardNumber").css("display", "block");
-        $("#keyboardSymbols,#keyboardCapitalLetter,#keyboardSmallLetter").css("display", "none");
+        $("#keyboard_numbers").css("display", "block");
+        $("#keyboard_symbols, #keyboard_uppercase, #keyboard_lowercase").css("display", "none");
     },
     changeToSymbols: function() {
-        $("#keyboardCapitalLetter,#keyboardNumber,#keyboardSmallLetter").css("display", "none");
-        $("#keyboardSymbols").css("display", "block");
+        $("#keyboard_uppercase, #keyboard_numbers, #keyboard_lowercase").css("display", "none");
+        $("#keyboard_symbols").css("display", "block");
     },
     updateCursor: function()
     {
@@ -123,18 +128,41 @@ var jsKeyboard = {
         var a = jsKeyboard.currentElement.val(),
             b = String.fromCharCode(m),
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos), b, a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                	var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), b, tail].join('')
+                } else {
+                    return [a.slice(0, pos), b, a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition++; //+1 cursor
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     del: function() {
         var a = jsKeyboard.currentElement.val(),
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos-1), a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                    var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), tail].join('')
+                } else {
+                    return [a.slice(0, pos - 1), a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
-        jsKeyboard.currentElementCursorPosition--; //-1 cursor
+        if (!selection)
+            jsKeyboard.currentElementCursorPosition -= 1; //-1 cursor
+        if (jsKeyboard.currentElementCursorPosition < 0)
+            jsKeyboard.currentElementCursorPosition = 0;
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     enter: function() {
         var t = jsKeyboard.currentElement.val();
@@ -144,10 +172,20 @@ var jsKeyboard = {
         var a = jsKeyboard.currentElement.val(),
             b = " ",
             pos = jsKeyboard.currentElementCursorPosition,
-            output = [a.slice(0, pos), b, a.slice(pos)].join('');
+            selection = jsKeyboard.currentSelection,
+            output = (function () {
+                if (selection) {
+                    var tail = a.slice(a.indexOf(selection) + selection.length);
+                    return [a.slice(0, a.indexOf(selection)), b, tail].join('')
+                } else {
+                    return [a.slice(0, pos), b, a.slice(pos)].join('');
+                }
+            }());
+
         jsKeyboard.currentElement.val(output);
         jsKeyboard.currentElementCursorPosition++; //+1 cursor
         jsKeyboard.updateCursor();
+        jsKeyboard.currentSelection = null;
     },
     writeSpecial: function(m) {
         var a = jsKeyboard.currentElement.val(),
@@ -254,12 +292,12 @@ var jsKeyboard = {
 
 // GET CURSOR POSITION
 jQuery.fn.getCursorPosition = function(){
-    if(this.lengh == 0) return -1;
+    if (!this.length) return -1;
     return $(this).getSelectionStart();
 }
 
 jQuery.fn.getSelectionStart = function(){
-    if(this.lengh == 0) return -1;
+    if (!this.length) return -1;
     input = this[0];
 
     var pos = input.value.length;
@@ -274,6 +312,19 @@ jQuery.fn.getSelectionStart = function(){
     pos = input.selectionStart;
 
     return pos;
+}
+
+jQuery.fn.getSelectionText = function(){
+    var input = this[0];
+    var text = '';
+    
+    if (window.getSelection // not supported in IE 8 and prior
+        && typeof input.selectionStart === 'number' 
+        && typeof input.selectionEnd === 'number') {
+        text = input.value.substring(input.selectionStart, input.selectionEnd);
+    }
+
+    return text;
 }
 
 //SET CURSOR POSITION

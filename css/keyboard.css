@@ -1,0 +1,66 @@
+#keyboard_container { width: 100%; text-align: center; }
+
+#keyboard { display: block; bottom: 0px; left: 0px; width: 810px; height: 288px;
+            margin: 0 auto; padding: 10px; padding-left: 25px; }
+
+/* move to js */
+#keyboard_uppercase { display: none;}
+#keyboard_lowercase { display: block; }
+#keyboard_numbers { display: none; }
+#keyboard_symbols { display: none; }
+
+/**
+ * @todo
+ * fluid
+ * softer shadow
+ * minimal defaults to js
+ * buttons in rows center-aligned
+ * width to fit button text
+ */
+.button {
+  position: relative; float: left;
+  margin-top: 10px; margin-right: 9px;
+  width: 60px; height: 60px; 
+  font-size: 1.9em;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px #000000;
+  border-radius: 5px;
+  background: #ffffff;
+  background: linear-gradient(top, 
+    #ffffff 0%, 
+    #e5e5e5 100%);
+  background: -webkit-linear-gradient(top, 
+    #ffffff 0%, 
+    #e5e5e5 100%);
+}
+.button:hover {
+  box-shadow: inset 
+    0 1px 1px rgba(0, 0, 0, 0.075), 
+    0 0 8px rgba(82, 168, 236, 0.6);
+}
+.button.down { background: #c9cdd5; box-shadow: none; }
+/* use fewer classes */
+/*.button_a {margin-left:26px;}
+.button_dash {margin-left:26px;}
+.button_underscore {margin-left:26px;}
+.button_enter {width:103px; font-size:1.3em; }
+.button_del{width:103px; font-size:1.3em;}
+.button_smallletter{font-size:1.3em;}
+.button_capitalletterleft{font-size:1.3em;}
+.button_capitalletterright{ width:129px; font-size:1.3em;}
+.button_numberleft{width:172px; font-size:1.3em; margin-left:26px;}
+.button_numberright{width:129px; font-size:1.3em;}
+.button_space {width:376px;}
+.button_symbolsleft{width:172px; font-size:1.3em; margin-left:26px;}
+.button_symbolsright{width:129px; font-size:1.3em;}*/
+
+.key { width: 100%; height: 100%; padding-top: 12px;
+       text-align: center; text-shadow: 0px 1px 1px #ffffff; }
+/* use fewer classes */
+/*.key_del { padding-top: 18px; }
+.key_enter { padding-top: 18px; }
+.key_smallletter { padding-top: 18px; }
+.key_capitalletterleft { padding-top: 18px; }
+.key_capitalletterright { padding-top: 18px; }
+.key_number { padding-top: 18px; }
+.key_symbols { padding-top: 18px; }*/

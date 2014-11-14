@@ -3,9 +3,6 @@ var jsKeyboard = {
         buttonClass: "button", // default button class
         onclick: "jsKeyboard.write();", // default onclick event for button
         keyClass: "key", // default key class used to define style of text of the button
-        text: {
-            close: "close"
-        }
     },
     "keyboard": [], // different keyboards can be set to this variable in order to switch between keyboards easily.
     init: function(elem, keyboard) {
@@ -20,11 +17,25 @@ var jsKeyboard = {
         jsKeyboard.addKeyDownEvent();
 
         jsKeyboard.show();
-        $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e)
-        {
+        $(':input').not('[type="reset"]').not('[type="submit"]').on('focus, click', function(e) {
             jsKeyboard.currentElement = $(this);
             jsKeyboard.currentElementCursorPosition = $(this).getCursorPosition();
             jsKeyboard.currentSelection = $(this).getSelectionText();
+            // physical keyboard: write
+            // jsKeyboard.currentElement[0].onkeypress = function (e) {
+            //     e.preventDefault();
+            //     var elem = $(".button[onclick='jsKeyboard.write(" + e.which + ");']");
+            //     elem.click();
+            // };
+            // physical keyboard: delete
+            // jsKeyboard.currentElement[0].onkeydown = function (e) {
+            //     if (e.which === 8) {
+            //         e.preventDefault();
+            //         var elem = $(".button[onclick='jsKeyboard.del()']")[0];
+            //         console.log(elem);
+            //         elem.click();
+            //     }
+            // };
             console.log('keyboard is now focused on '+jsKeyboard.currentElement.attr('name')+' at pos('+jsKeyboard.currentElementCursorPosition+')');
         });
     },
@@ -43,33 +54,30 @@ var jsKeyboard = {
 
         var s = "";
         s += "<div id=\"keyboard\">";
-        s += "<div id=\"keyboardHeader\">";
-        // s += "<div onclick=\"jsKeyboard.hide();\"><span>" + jsKeyboard.settings.text.close + "</span><span class=\"closex\"> X</span></div>"
-        s += "</div>";
 
         /*small letter */
-        s += "<div id=\"keyboardSmallLetter\">";
+        s += "<div id=\"keyboard_lowercase\">";
         $.each(jsKeyboard.keyboard[keyboard].smallLetter, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*capital letter*/
-        s += "<div id=\"keyboardCapitalLetter\">";
+        s += "<div id=\"keyboard_uppercase\">";
         $.each(jsKeyboard.keyboard[keyboard].capitalLetter, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*number*/
-        s += "<div id=\"keyboardNumber\">";
+        s += "<div id=\"keyboard_numbers\">";
         $.each(jsKeyboard.keyboard[keyboard].number, function(i, key) {
             generate(key);
         });
         s += "</div>";
 
         /*symbols*/
-        s += "<div id=\"keyboardSymbols\">";
+        s += "<div id=\"keyboard_symbols\">";
         $.each(jsKeyboard.keyboard[keyboard].symbols, function(i, key) {
             generate(key);
         });
@@ -90,30 +98,26 @@ var jsKeyboard = {
         $("#" + jsKeyboard.keyboardLayout).html(s);
     },
     addKeyDownEvent: function() {
-        $("#keyboardCapitalLetter > div.button, #keyboardSmallLetter > div.button, #keyboardNumber > div.button, #keyboardSymbols > div.button").
-            bind('mousedown', (function() { $(this).addClass("buttonDown"); })).
-            bind('mouseup', (function() { $(this).removeClass("buttonDown"); })).
-            bind('mouseout', (function() { $(this).removeClass("buttonDown"); }));
-
-            //key focus down on actual keyboard key presses
-            //todo:....
-
+        $("#keyboard_uppercase > div.button, #keyboard_lowercase > div.button, #keyboard_numbers > div.button, #keyboard_symbols > div.button")
+            .bind('mousedown', (function() { $(this).addClass("down"); }))
+            .bind('mouseup', (function() { $(this).removeClass("down"); }))
+            .bind('mouseout', (function() { $(this).removeClass("down"); }));
     },
     changeToSmallLetter: function() {
-        $("#keyboardCapitalLetter,#keyboardNumber,#keyboardSymbols").css("display", "none");
-        $("#keyboardSmallLetter").css("display", "block");
+        $("#keyboard_uppercase, #keyboard_numbers, #keyboard_symbols").css("display", "none");
+        $("#keyboard_lowercase").css("display", "block");
     },
     changeToCapitalLetter: function() {
-        $("#keyboardCapitalLetter").css("display", "block");
-        $("#keyboardSmallLetter,#keyboardNumber,#keyboardSymbols").css("display", "none");
+        $("#keyboard_uppercase").css("display", "block");
+        $("#keyboard_lowercase, #keyboard_numbers, #keyboard_symbols").css("display", "none");
     },
     changeToNumber: function() {
-        $("#keyboardNumber").css("display", "block");
-        $("#keyboardSymbols,#keyboardCapitalLetter,#keyboardSmallLetter").css("display", "none");
+        $("#keyboard_numbers").css("display", "block");
+        $("#keyboard_symbols, #keyboard_uppercase, #keyboard_lowercase").css("display", "none");
     },
     changeToSymbols: function() {
-        $("#keyboardCapitalLetter,#keyboardNumber,#keyboardSmallLetter").css("display", "none");
-        $("#keyboardSymbols").css("display", "block");
+        $("#keyboard_uppercase, #keyboard_numbers, #keyboard_lowercase").css("display", "none");
+        $("#keyboard_symbols").css("display", "block");
     },
     updateCursor: function()
     {
@@ -311,13 +315,13 @@ jQuery.fn.getSelectionStart = function(){
 }
 
 jQuery.fn.getSelectionText = function(){
-    var el = this[0];
+    var input = this[0];
     var text = '';
     
     if (window.getSelection // not supported in IE 8 and prior
-        && typeof el.selectionStart === 'number' 
-        && typeof el.selectionEnd === 'number') {
-        text = el.value.substring(el.selectionStart, el.selectionEnd);
+        && typeof input.selectionStart === 'number' 
+        && typeof input.selectionEnd === 'number') {
+        text = input.value.substring(input.selectionStart, input.selectionEnd);
     }
 
     return text;

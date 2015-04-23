@@ -1,14 +1,12 @@
 jQuery On-screen keyboard
 ================
-
-This is a simple on-screen keyboard powered by JavaScript/jQuery.
-
-Demo: http://www.jquery4u.com/demos/onscreenkeyboard/
+Based on work of Sam Derring, on-screen keyboard this is an updated keyboard. Which provides other kinds of features.
+Just like its predecessor it is powered by JavaScript/jQuery.
 
 
 The MIT License (MIT)
 ================
-
+Copyright © 2015 Geofrey Burgos,
 Copyright © 2014 Sam Deering, http://samdeering.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:

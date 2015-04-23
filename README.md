@@ -3,6 +3,10 @@ jQuery mobile On-screen keyboard
 Based on work of Sam Derring, on-screen keyboard this is an updated keyboard. Which provides other kinds of features.
 Just like its predecessor it is powered by JavaScript/jQuery/jQuery mobile.
 
+Features
+================
+*TODO, will list all features shortly...
+
 
 The MIT License (MIT)
 ================

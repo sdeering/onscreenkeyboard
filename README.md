@@ -1,7 +1,7 @@
-jQuery mobile On-screen keyboard
+jQuery mobile screen keyboard
 ================
-Based on work of Sam Derring, on-screen keyboard this is an updated keyboard. Which provides other kinds of features.
-Just like its predecessor it is powered by JavaScript/jQuery/jQuery mobile.
+Based on work of Sam Derring, (on-screen keyboard) this is an updated versio of it with new features.
+Just like its predecessor it is powered by JavaScript/jQuery. Also this fork uses jQuery mobile.
 
 Features
 ================

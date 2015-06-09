@@ -9,6 +9,11 @@ Article: http://www.sitepoint.com/jquery-on-screen-keyboard/
 
 [![jQuery On-screen keyboard](http://dab1nmslvvntp.cloudfront.net/wp-content/uploads/jquery4u/2013/05/29-05-2013-4-27-26-PM.jpg "jQuery On-screen keyboard")](http://www.jquery4u.com/demos/onscreenkeyboard/)
 
+jQuery mobile screen keyboard
+================
+This version has been modified for jQuery Mobile and has other features here: https://github.com/grburgos/mobilescreenkeyboard
+
+Credits to: [@grburgos](https://github.com/grburgos/)
 
 The MIT License (MIT)
 ================

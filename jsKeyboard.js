@@ -262,12 +262,12 @@ var jsKeyboard = {
 
 // GET CURSOR POSITION
 jQuery.fn.getCursorPosition = function(){
-	if(this.lengh == 0) return -1;
+	if(this.length == 0) return -1;
 	return $(this).getSelectionStart();
 }
 
 jQuery.fn.getSelectionStart = function(){
-	if(this.lengh == 0) return -1;
+	if(this.length == 0) return -1;
 	input = this[0];
 
 	var pos = input.value.length;

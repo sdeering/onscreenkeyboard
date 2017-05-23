@@ -3,7 +3,7 @@ jQuery On-screen keyboard
 
 This is a simple on-screen keyboard powered by JavaScript/jQuery.
 
-Demo: http://www.jquery4u.com/demos/onscreenkeyboard/
+Demo: https://www.sitepoint.com/jquery-on-screen-keyboard/
 
 Article: http://www.sitepoint.com/jquery-on-screen-keyboard/
 
